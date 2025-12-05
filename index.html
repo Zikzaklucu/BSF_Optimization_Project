@@ -3,273 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSF Profit Optimizer - PIAT UGM Model</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>BSF Optimization - Kelompok 12</title>
     
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS with Custom Palette -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        poster: {
+                            dark: '#337259',    // Hijau Tua
+                            cream: '#f8f4d9',   // Background Krem
+                            orange: '#ea8e11',  // Aksen Oranye
+                            leaf: '#427f12',    // Hijau Daun
+                        }
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Libs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0fdf4; }
-        .tab-active { border-bottom: 3px solid #16a34a; color: #16a34a; font-weight: bold; }
-        .tab-inactive { color: #6b7280; }
+        body { background-color: #f8f4d9; color: #1e293b; }
+        
+        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Animated Gradient Class */
+        .animated-gradient-bg {
+            background: linear-gradient(-45deg, #337259, #427f12, #2d5a45, #ea8e11);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f8f4d9; }
+        ::-webkit-scrollbar-thumb { background: #337259; border-radius: 4px; }
     </style>
 </head>
-<body class="text-gray-800 relative">
+<body class="antialiased flex flex-col min-h-screen">
 
     <!-- Navbar -->
-    <nav class="bg-green-700 text-white p-4 shadow-lg sticky top-0 z-40">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-bug text-2xl"></i>
+    <nav class="bg-poster-dark text-white shadow-lg sticky top-0 z-50 border-b-4 border-poster-orange">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                    <i class="fas fa-leaf text-poster-orange text-2xl"></i>
+                </div>
                 <div>
-                    <h1 class="text-xl font-bold hidden md:block">BSF Profit Optimizer</h1>
-                    <h1 class="text-xl font-bold md:hidden">BSF Optimizer</h1>
-                    <p class="text-xs text-green-200">PIAT UGM Project Model</p>
+                    <h1 class="font-heading font-bold text-xl leading-none tracking-tight">Optimisasi BSF</h1>
+                    <p class="text-xs text-orange-200 font-medium tracking-wide mt-1">KELOMPOK 12</p>
                 </div>
             </div>
             
-            <!-- TOMBOL LINK KE GOOGLE COLAB -->
-            <div>
-                <a href="https://colab.research.google.com/drive/1FW3X1tMOPpLh3j6GwT-jgSx7Q0rUM_An?usp=sharing" 
-                   target="_blank" 
-                   class="bg-gray-900 hover:bg-black text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow border border-gray-600 flex items-center decoration-none">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" class="w-5 h-5 mr-2" alt="Colab Logo">
-                    Buka Source Code
-                </a>
-            </div>
+            <!-- BUTTON LINK KE COLAB (Fixed Link) -->
+            <a href="https://colab.research.google.com/drive/1FW3X1tMOPpLh3j6GwT-jgSx7Q0rUM_An?usp=sharing#scrollTo=YeLPmevlOGoS" target="_blank" class="hidden md:flex items-center gap-2 bg-poster-leaf hover:bg-poster-orange text-white border border-white/20 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:scale-105 shadow-md no-underline">
+                <i class="fab fa-python text-lg"></i>
+                Model Python
+            </a>
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="container mx-auto mt-6 p-4 max-w-5xl">
+    <!-- Main Content -->
+    <div class="container mx-auto mt-8 px-4 max-w-6xl flex-grow pb-12">
         
-        <!-- Tabs Menu -->
-        <div class="flex border-b border-gray-300 mb-6 bg-white rounded-t-lg shadow-sm">
-            <button onclick="switchTab('calculator')" id="tab-calc" class="w-1/2 py-4 text-center tab-active transition hover:bg-gray-50">
-                <i class="fas fa-calculator mr-2"></i> Kalkulator
-            </button>
-            <button onclick="switchTab('reference')" id="tab-ref" class="w-1/2 py-4 text-center tab-inactive transition hover:bg-gray-50">
-                <i class="fas fa-book mr-2"></i> Referensi Riset
-            </button>
+        <!-- Tabs -->
+        <div class="flex justify-center mb-8 fade-in-up">
+            <div class="bg-white/80 backdrop-blur p-1.5 rounded-2xl shadow-sm border border-poster-dark/10 inline-flex">
+                <button onclick="switchTab('model')" id="tab-model" class="px-6 py-2.5 rounded-xl text-sm font-heading font-semibold transition-all duration-300 bg-poster-dark text-white shadow-md">
+                    <i class="fas fa-calculator mr-2"></i> Simulasi
+                </button>
+                <button onclick="switchTab('theory')" id="tab-theory" class="px-6 py-2.5 rounded-xl text-sm font-heading font-semibold transition-all duration-300 text-slate-500 hover:text-poster-dark hover:bg-poster-cream">
+                    <i class="fas fa-square-root-alt mr-2"></i> Model
+                </button>
+                <button onclick="switchTab('ref')" id="tab-ref" class="px-6 py-2.5 rounded-xl text-sm font-heading font-semibold transition-all duration-300 text-slate-500 hover:text-poster-dark hover:bg-poster-cream">
+                    <i class="fas fa-book mr-2"></i> Referensi
+                </button>
+            </div>
         </div>
 
-        <!-- SECTION 1: CALCULATOR -->
-        <div id="section-calculator" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- SECTION: MODEL SIMULATION -->
+        <div id="section-model" class="grid grid-cols-1 lg:grid-cols-12 gap-8 fade-in-up">
             
-            <!-- Input Column -->
-            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md h-fit">
-                <h2 class="text-lg font-bold mb-4 text-green-800 border-b pb-2">1. Input Variabel</h2>
-                
-                <!-- Mode Toggle -->
-                <div class="flex bg-gray-100 p-1 rounded-lg mb-4">
-                    <button onclick="setMode('simple')" id="btn-simple" class="w-1/2 py-1 rounded-md text-sm font-medium bg-white shadow text-green-700">Mode Simpel</button>
-                    <button onclick="setMode('advanced')" id="btn-advanced" class="w-1/2 py-1 rounded-md text-sm font-medium text-gray-500 hover:text-green-700">Advanced</button>
-                </div>
+            <!-- LEFT: INPUTS -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-lg border border-white">
+                    
+                    <div class="flex bg-poster-cream p-1.5 rounded-xl mb-6 relative border border-poster-dark/10">
+                        <button onclick="setMode('simple')" id="btn-simple" class="w-1/2 py-2 rounded-lg text-xs font-bold font-heading transition-all bg-poster-leaf text-white shadow-sm">SIMPEL</button>
+                        <button onclick="setMode('advanced')" id="btn-advanced" class="w-1/2 py-2 rounded-lg text-xs font-bold font-heading transition-all text-slate-500 hover:text-poster-dark">ADVANCED</button>
+                    </div>
 
-                <form id="optimizerForm" onsubmit="event.preventDefault(); calculate();">
-                    <div id="inputs-container"></div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg mt-4 transition shadow-lg transform hover:scale-105">
-                        <i class="fas fa-rocket mr-2"></i> Hitung Optimasi
-                    </button>
-                </form>
+                    <form id="optForm" onsubmit="event.preventDefault(); solve();" onchange="saveInputs()">
+                        
+                        <div class="mb-6">
+                            <h3 class="text-xs font-bold text-poster-dark uppercase tracking-wider mb-3">Harga Pasar (Rp/kg)</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="relative group">
+                                    <label class="absolute -top-2 left-3 bg-white px-2 text-[10px] font-bold text-poster-leaf rounded border border-poster-leaf/20">Basah ( \(p_b\) )</label>
+                                    <input type="number" id="p_b" value="6000" class="w-full pt-3 pb-2 px-3 border-2 border-slate-100 rounded-xl bg-slate-50 font-bold text-poster-dark text-right focus:outline-none focus:border-poster-leaf transition">
+                                </div>
+                                <div class="relative group">
+                                    <label class="absolute -top-2 left-3 bg-white px-2 text-[10px] font-bold text-poster-orange rounded border border-poster-orange/20">Kering ( \(p_k\) )</label>
+                                    <input type="number" id="p_k" value="45000" class="w-full pt-3 pb-2 px-3 border-2 border-slate-100 rounded-xl bg-slate-50 font-bold text-poster-dark text-right focus:outline-none focus:border-poster-orange transition">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xs font-bold text-poster-dark uppercase tracking-wider mb-3">Sumber Daya</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 p-2 rounded-xl group hover:border-poster-orange transition">
+                                <div class="w-10 h-10 rounded-lg bg-white border border-slate-100 text-poster-orange flex items-center justify-center shadow-sm"><i class="fas fa-trash-alt"></i></div>
+                                <div class="flex-grow"><label class="text-[10px] font-bold text-slate-500 block">SAMPAH (\(W\))</label><input type="number" id="W" value="150" class="w-full text-sm font-bold text-poster-dark bg-transparent focus:outline-none"></div><span class="text-[10px] font-bold text-slate-400 pr-2">kg</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 p-2 rounded-xl group hover:border-poster-leaf transition">
+                                <div class="w-10 h-10 rounded-lg bg-white border border-slate-100 text-poster-leaf flex items-center justify-center shadow-sm"><i class="fas fa-wallet"></i></div>
+                                <div class="flex-grow"><label class="text-[10px] font-bold text-slate-500 block">ANGGARAN (\(C\))</label><input type="number" id="C" value="500000" class="w-full text-sm font-bold text-poster-dark bg-transparent focus:outline-none"></div><span class="text-[10px] font-bold text-slate-400 pr-2">Rp</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 p-2 rounded-xl group hover:border-purple-400 transition">
+                                <div class="w-10 h-10 rounded-lg bg-white border border-slate-100 text-purple-500 flex items-center justify-center shadow-sm"><i class="fas fa-warehouse"></i></div>
+                                <div class="flex-grow"><label class="text-[10px] font-bold text-slate-500 block">RUANG (\(S\))</label><input type="number" id="S" value="50" class="w-full text-sm font-bold text-poster-dark bg-transparent focus:outline-none"></div><span class="text-[10px] font-bold text-slate-400 pr-2">m²</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 p-2 rounded-xl group hover:border-red-400 transition">
+                                <div class="w-10 h-10 rounded-lg bg-white border border-slate-100 text-red-500 flex items-center justify-center shadow-sm"><i class="fas fa-users"></i></div>
+                                <div class="flex-grow"><label class="text-[10px] font-bold text-slate-500 block">TENAGA (\(L\))</label><input type="number" id="L" value="8" class="w-full text-sm font-bold text-poster-dark bg-transparent focus:outline-none"></div><span class="text-[10px] font-bold text-slate-400 pr-2">jam</span>
+                            </div>
+                        </div>
+
+                        <div id="advanced-area" class="hidden mt-6 bg-poster-cream p-4 rounded-xl border border-poster-dark/10">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-xs font-bold text-poster-dark uppercase">Koefisien Teknis</h4>
+                                <button type="button" onclick="resetDefaults()" class="text-[10px] text-poster-orange hover:underline font-bold">Reset Default</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-xs">
+                                <div><label class="block mb-1 text-slate-500 font-bold">Sampah (kg)</label><div class="space-y-1"><div class="flex justify-between items-center"><span>Basah:</span> <input id="w_b" value="3" class="w-12 text-right border rounded bg-white px-1"></div><div class="flex justify-between items-center"><span>Kering:</span> <input id="w_k" value="5" class="w-12 text-right border rounded bg-white px-1"></div></div></div>
+                                <div><label class="block mb-1 text-slate-500 font-bold">Biaya (Rp)</label><div class="space-y-1"><div class="flex justify-between items-center"><span>Basah:</span> <input id="c_b" value="2000" class="w-12 text-right border rounded bg-white px-1"></div><div class="flex justify-between items-center"><span>Kering:</span> <input id="c_k" value="5000" class="w-12 text-right border rounded bg-white px-1"></div></div></div>
+                                <div><label class="block mb-1 text-slate-500 font-bold">Ruang (m²)</label><div class="space-y-1"><div class="flex justify-between items-center"><span>Basah:</span> <input id="s_b" value="0.1" class="w-12 text-right border rounded bg-white px-1"></div><div class="flex justify-between items-center"><span>Kering:</span> <input id="s_k" value="0.2" class="w-12 text-right border rounded bg-white px-1"></div></div></div>
+                                <div><label class="block mb-1 text-slate-500 font-bold">Jam</label><div class="space-y-1"><div class="flex justify-between items-center"><span>Basah:</span> <input id="l_b" value="0.05" class="w-12 text-right border rounded bg-white px-1"></div><div class="flex justify-between items-center"><span>Kering:</span> <input id="l_k" value="0.1" class="w-12 text-right border rounded bg-white px-1"></div></div></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full mt-6 bg-poster-orange hover:bg-orange-600 text-white font-heading font-bold py-3.5 rounded-xl shadow-lg transform transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fas fa-rocket"></i> HITUNG OPTIMASI
+                        </button>
+                    </form>
+                </div>
             </div>
 
-            <!-- Result Column -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Top Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-gradient-to-br from-green-600 to-green-500 text-white p-5 rounded-lg shadow-lg">
-                        <div class="text-green-100 text-sm font-semibold uppercase">Profit Maksimal</div>
-                        <div class="text-2xl font-bold mt-1" id="res-profit">Rp 0</div>
-                        <div class="text-xs mt-2 opacity-80"><i class="fas fa-coins"></i> per siklus</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg shadow-md border-l-4 border-blue-500">
-                        <div class="text-gray-500 text-sm font-semibold uppercase">Jual Segar</div>
-                        <div class="text-2xl font-bold text-gray-800 mt-1" id="res-fresh">0 kg</div>
-                    </div>
-                    <div class="bg-white p-5 rounded-lg shadow-md border-l-4 border-orange-500">
-                        <div class="text-gray-500 text-sm font-semibold uppercase">Jual Kering</div>
-                        <div class="text-2xl font-bold text-gray-800 mt-1" id="res-dry">0 kg</div>
+            <!-- RIGHT: RESULTS -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- HERO CARD WITH SLOW ANIMATED GRADIENT -->
+                <div class="relative overflow-hidden rounded-3xl animated-gradient-bg shadow-xl text-white p-8 group border border-poster-leaf">
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-poster-cream font-heading font-semibold text-sm uppercase tracking-widest border-b border-white/30 pb-1">Pendapatan Maksimal</h3>
+                            <button onclick="copyResult()" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition backdrop-blur-md flex items-center gap-2 border border-white/20">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-baseline gap-2 mb-8 mt-2">
+                            <span class="text-3xl font-medium text-white/80">Rp</span>
+                            <span id="res-z" class="text-5xl md:text-7xl font-bold font-heading tracking-tight text-white drop-shadow-md">0</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-black/20 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center gap-3 mb-1">
+                                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                                    <span class="text-xs text-white/80 uppercase font-bold tracking-wider">Maggot Basah</span>
+                                </div>
+                                <span id="res-xb" class="text-2xl font-bold font-heading">0</span> <span class="text-sm opacity-60">kg</span>
+                            </div>
+                            <div class="bg-black/20 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center gap-3 mb-1">
+                                    <div class="w-2 h-2 rounded-full bg-poster-orange"></div>
+                                    <span class="text-xs text-white/80 uppercase font-bold tracking-wider">Maggot Kering</span>
+                                </div>
+                                <span id="res-xk" class="text-2xl font-bold font-heading text-poster-orange">0</span> <span class="text-sm opacity-60">kg</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Charts & Details -->
+                <!-- GRIDS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-4 rounded-lg shadow-md">
-                        <h3 class="text-gray-700 font-bold mb-2 text-center text-sm">Distribusi Keuangan</h3>
-                        <div class="relative h-48 w-full"><canvas id="profitChart"></canvas></div>
+                    <div class="bg-white/90 p-6 rounded-3xl shadow-md border border-white">
+                        <h4 class="font-heading font-bold text-poster-dark text-sm mb-4 flex items-center gap-2">
+                            <i class="fas fa-chart-pie text-poster-leaf"></i> Penggunaan Sumber Daya
+                        </h4>
+                        <div class="h-48"><canvas id="constraintChart"></canvas></div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow-md text-sm">
-                        <h3 class="text-gray-700 font-bold mb-3 border-b pb-2">Metrik Operasional</h3>
-                        <ul class="space-y-3">
-                            <li class="flex justify-between"><span class="text-gray-600">Sampah Terolah:</span><span class="font-bold text-gray-800" id="res-waste">0 kg</span></li>
-                            <li class="flex justify-between"><span class="text-gray-600">Total Biomassa:</span><span class="font-bold text-gray-800" id="res-biomass">0 kg</span></li>
-                            <li class="flex justify-between"><span class="text-gray-600">Utilisasi Fasilitas:</span><span class="font-bold text-gray-800" id="res-utilization">0%</span></li>
-                            <li class="flex justify-between"><span class="text-gray-600">Est. Biaya Listrik:</span><span class="font-bold text-red-600" id="res-electricity">Rp 0</span></li>
-                        </ul>
+
+                    <div class="bg-white/90 p-6 rounded-3xl shadow-md border border-white flex flex-col h-full">
+                        <h4 class="font-heading font-bold text-poster-dark text-sm mb-4 flex items-center gap-2">
+                            <i class="fas fa-stethoscope text-poster-orange"></i> Analisis Bottleneck
+                        </h4>
+                        <ul id="limiting-factors" class="space-y-3 flex-grow"></ul>
+                        <div id="recommendation" class="mt-4 p-3 bg-poster-cream text-poster-dark text-xs rounded-xl border border-poster-dark/10 leading-relaxed font-medium">Belum ada data.</div>
                     </div>
-                </div>
-                
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm text-blue-800">
-                    <strong class="block mb-1"><i class="fas fa-lightbulb"></i> Analisis Strategi:</strong>
-                    <p id="strategy-text">Masukkan data untuk melihat rekomendasi AI.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 2: REFERENCES -->
-        <div id="section-reference" class="hidden bg-white p-8 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold text-green-800 mb-6 border-b pb-4">Dasar Teori & Referensi</h2>
-            <div class="space-y-6">
-                <div class="flex gap-4 items-start">
-                    <i class="fas fa-flask text-green-600 text-2xl mt-1"></i>
-                    <div>
-                        <h3 class="font-bold text-lg">1. Bioconversion Rate (20%)</h3>
-                        <p class="text-gray-600 italic">"Black Soldier Fly Biowaste Processing - A Step-by-Step Guide", Eawag (2017).</p>
+        <!-- THEORY SECTION -->
+        <div id="section-theory" class="hidden bg-white/90 p-8 rounded-3xl shadow-md border border-white fade-in-up max-w-4xl mx-auto">
+            <h2 class="text-2xl font-heading font-bold text-poster-dark mb-8 border-b border-poster-leaf/30 pb-4">Formulasi Matematis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <h3 class="font-bold text-poster-dark mb-4 border-l-4 border-poster-leaf pl-3">Fungsi Objektif</h3>
+                    <div class="bg-poster-cream p-6 rounded-2xl font-mono text-lg text-center border border-poster-dark/10 shadow-inner mb-4 text-poster-dark">
+                        \[ \max Z = p_b x_b + p_k x_k \]
                     </div>
+                    <p class="text-sm text-slate-600">Memaksimalkan total pendapatan (Z) dari kombinasi produk basah dan kering.</p>
                 </div>
-                <div class="flex gap-4 items-start">
-                    <i class="fas fa-sun text-orange-500 text-2xl mt-1"></i>
-                    <div>
-                        <h3 class="font-bold text-lg">2. Rasio Pengeringan (4:1)</h3>
-                        <p class="text-gray-600 italic">"State-of-the-art on use of insects as animal feed", Makkar et al (2014).</p>
+                <div>
+                    <h3 class="font-bold text-poster-dark mb-4 border-l-4 border-poster-orange pl-3">Kendala</h3>
+                    <div class="space-y-3 text-sm font-mono text-slate-700">
+                        <div class="flex justify-between bg-white border p-3 rounded-xl"><span class="font-bold text-poster-orange text-xs">SAMPAH</span><span>\( w_b x_b + w_k x_k \leq W \)</span></div>
+                        <div class="flex justify-between bg-white border p-3 rounded-xl"><span class="font-bold text-purple-500 text-xs">RUANG</span><span>\( s_b x_b + s_k x_k \leq S \)</span></div>
+                        <div class="flex justify-between bg-white border p-3 rounded-xl"><span class="font-bold text-poster-leaf text-xs">ANGGARAN</span><span>\( c_b x_b + c_k x_k \leq C \)</span></div>
+                        <div class="flex justify-between bg-white border p-3 rounded-xl"><span class="font-bold text-red-500 text-xs">TENAGA</span><span>\( l_b x_b + l_k x_k \leq L \)</span></div>
                     </div>
-                </div>
-                <div class="mt-8 bg-gray-100 p-4 rounded text-sm text-gray-600">
-                    <strong>Catatan Akademis:</strong> Aplikasi ini menggunakan pendekatan <em>Deterministic Linear Programming</em>. Logika optimasi di website ini adalah porting langsung dari algoritma Python yang dapat dilihat pada menu "Buka Source Code".
                 </div>
             </div>
         </div>
 
+        <!-- REFERENCE SECTION -->
+        <div id="section-ref" class="hidden bg-white/90 p-8 rounded-3xl shadow-md border border-white fade-in-up max-w-3xl mx-auto">
+            <h2 class="text-2xl font-heading font-bold text-poster-dark mb-6 border-b border-poster-leaf/30 pb-4">Daftar Pustaka</h2>
+            <ul class="space-y-6">
+                <li class="flex gap-4 group">
+                    <div class="w-12 h-12 rounded-2xl bg-poster-cream text-poster-dark flex items-center justify-center text-xl flex-shrink-0"><i class="fas fa-book"></i></div>
+                    <div><h4 class="font-bold text-poster-dark text-lg">Diktat Teori Bilangan</h4><p class="text-sm text-slate-600 mt-1">Landasan teori algoritma optimasi linear.</p></div>
+                </li>
+                <li class="flex gap-4 group">
+                    <div class="w-12 h-12 rounded-2xl bg-poster-cream text-poster-orange flex items-center justify-center text-xl flex-shrink-0"><i class="fas fa-flask"></i></div>
+                    <div><h4 class="font-bold text-poster-dark text-lg">Dortmans, B.M.A., et al. (2017)</h4><p class="text-sm text-slate-600 italic">"Black Soldier Fly Biowaste Processing"</p><p class="text-xs text-slate-400 mt-1">Eawag/Sandec.</p></div>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="text-center py-6 text-gray-500 text-sm mt-8">
-        <p>&copy; 2024 PIAT UGM Project Model.</p>
+    <!-- Footer Updated Year -->
+    <footer class="bg-white border-t border-poster-dark/10 mt-12 py-8">
+        <div class="container mx-auto text-center">
+            <h5 class="text-xs font-bold text-poster-dark uppercase tracking-widest mb-4">Tim Penyusun Project</h5>
+            <div class="flex flex-wrap justify-center gap-6 text-sm font-heading font-semibold text-slate-700">
+                <span class="hover:text-poster-orange transition cursor-default">M. AZZAM MUZAKKI</span>
+                <span class="text-poster-dark/30">•</span>
+                <span class="hover:text-poster-orange transition cursor-default">MOSES SAHAT L.N</span>
+                <span class="text-poster-dark/30">•</span>
+                <span class="hover:text-poster-orange transition cursor-default">CHINTA BELLA</span>
+                <span class="text-poster-dark/30">•</span>
+                <span class="hover:text-poster-orange transition cursor-default">KAISADIBA</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-6">&copy; 2025 Optimisasi BSF. All rights reserved.</p>
+        </div>
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- 1. DEFAULTS ---
-        const DEFAULTS = { bcr: 0.20, drying_ratio: 4.0, energy: 2.5, electricity: 1444.70, dryer_cap_simple: 100000 };
-        let currentMode = 'simple';
         let myChart = null;
+        document.addEventListener('DOMContentLoaded', () => { loadInputs(); solve(); });
 
-        // --- 2. INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => { renderInputs(); calculate(); });
-
-        // --- 3. TABS & MODE ---
-        function switchTab(tabName) {
-            document.getElementById('section-calculator').classList.toggle('hidden', tabName !== 'calculator');
-            document.getElementById('section-reference').classList.toggle('hidden', tabName !== 'reference');
-            document.getElementById('tab-calc').className = tabName === 'calculator' ? "w-1/2 py-4 text-center tab-active hover:bg-gray-50" : "w-1/2 py-4 text-center tab-inactive hover:bg-gray-50";
-            document.getElementById('tab-ref').className = tabName === 'reference' ? "w-1/2 py-4 text-center tab-active hover:bg-gray-50" : "w-1/2 py-4 text-center tab-inactive hover:bg-gray-50";
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
-            document.getElementById('btn-simple').className = mode === 'simple' ? "w-1/2 py-1 rounded-md text-sm font-medium bg-white shadow text-green-700" : "w-1/2 py-1 rounded-md text-sm font-medium text-gray-500 hover:text-green-700";
-            document.getElementById('btn-advanced').className = mode === 'advanced' ? "w-1/2 py-1 rounded-md text-sm font-medium bg-white shadow text-green-700" : "w-1/2 py-1 rounded-md text-sm font-medium text-gray-500 hover:text-green-700";
-            renderInputs();
-        }
-
-        function renderInputs() {
-            const container = document.getElementById('inputs-container');
-            let html = '';
-            html += createInput('waste', 'Sampah Tersedia (kg)', 1000);
-            html += createInput('capacity', 'Kapasitas Maggot Basah (kg)', 300);
-            html += createInput('price_fresh', 'Harga Jual Segar (Rp/kg)', 6000);
-            html += createInput('price_dry', 'Harga Jual Kering (Rp/kg)', 45000);
-            html += createInput('cost_ops', 'Biaya Ops / kg Sampah (Rp)', 500);
-
-            if (currentMode === 'advanced') {
-                html += `<div class="border-t pt-4 mt-4"><h3 class="font-bold text-xs text-gray-500 uppercase mb-2">Parameter Teknis</h3>`;
-                html += createInput('bcr', 'Bioconversion Rate (Desimal)', DEFAULTS.bcr);
-                html += createInput('ratio', 'Rasio Pengeringan', DEFAULTS.drying_ratio);
-                html += createInput('energy', 'Energi Pengering (kWh/kg)', DEFAULTS.energy);
-                html += createInput('elec_price', 'Tarif Listrik (Rp/kWh)', DEFAULTS.electricity);
-                html += createInput('dryer_cap', 'Kapasitas Mesin (kg)', 500);
-                html += `</div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        function createInput(id, label, defaultVal) {
-            return `<div class="input-group mb-3"><label class="block text-xs font-bold text-gray-600 mb-1">${label}</label><input type="number" id="in_${id}" value="${defaultVal}" class="w-full p-2 border rounded focus:ring-2 focus:ring-green-500" step="any" required></div>`;
-        }
-
-        // --- 4. CALCULATION LOGIC ---
-        function calculate() {
-            const waste = parseFloat(document.getElementById('in_waste').value) || 0;
-            const facilityCap = parseFloat(document.getElementById('in_capacity').value) || 0;
-            const priceFresh = parseFloat(document.getElementById('in_price_fresh').value) || 0;
-            const priceDry = parseFloat(document.getElementById('in_price_dry').value) || 0;
-            const costOpsPerKg = parseFloat(document.getElementById('in_cost_ops').value) || 0;
-
-            let bcr = DEFAULTS.bcr, ratio = DEFAULTS.drying_ratio, energy = DEFAULTS.energy, elecPrice = DEFAULTS.electricity, dryerCap = DEFAULTS.dryer_cap_simple;
-
-            if (currentMode === 'advanced') {
-                bcr = parseFloat(document.getElementById('in_bcr').value) || 0.2;
-                ratio = parseFloat(document.getElementById('in_ratio').value) || 4;
-                energy = parseFloat(document.getElementById('in_energy').value) || 2.5;
-                elecPrice = parseFloat(document.getElementById('in_elec_price').value) || 1444;
-                dryerCap = parseFloat(document.getElementById('in_dryer_cap').value) || 1000;
-            }
-
-            const maxBiomassFromWaste = waste * bcr;
-            const globalBiomassLimit = Math.min(maxBiomassFromWaste, facilityCap);
-
-            // Optimization Logic (Corner Point)
-            const profitA = calculateProfit(globalBiomassLimit, 0, priceFresh, priceDry, costOpsPerKg, energy, elecPrice, ratio, bcr);
-            
-            const maxDryPossible = Math.min(dryerCap, globalBiomassLimit / ratio);
-            const profitB = calculateProfit(globalBiomassLimit - (maxDryPossible * ratio), maxDryPossible, priceFresh, priceDry, costOpsPerKg, energy, elecPrice, ratio, bcr);
-
-            let bestFresh, bestDry, maxProfit;
-            if (profitA >= profitB) { bestFresh = globalBiomassLimit; bestDry = 0; maxProfit = profitA; }
-            else { bestDry = maxDryPossible; bestFresh = globalBiomassLimit - (bestDry * ratio); maxProfit = profitB; }
-
-            const totalBiomass = bestFresh + (bestDry * ratio);
-            const totalWasteUsed = totalBiomass / bcr;
-            const electricityCost = bestDry * energy * elecPrice;
-            const opsCost = totalWasteUsed * costOpsPerKg;
-
-            document.getElementById('res-profit').innerText = formatRupiah(maxProfit);
-            document.getElementById('res-fresh').innerText = bestFresh.toFixed(2) + " kg";
-            document.getElementById('res-dry').innerText = bestDry.toFixed(2) + " kg";
-            document.getElementById('res-waste').innerText = totalWasteUsed.toFixed(2) + " kg";
-            document.getElementById('res-biomass').innerText = totalBiomass.toFixed(2) + " kg";
-            document.getElementById('res-utilization').innerText = ((totalBiomass/facilityCap)*100).toFixed(1) + "%";
-            document.getElementById('res-electricity').innerText = formatRupiah(electricityCost);
-
-            const strategyEl = document.getElementById('strategy-text');
-            if (bestDry > 0 && bestFresh > 0) strategyEl.innerHTML = `Strategi Campuran: Optimalkan pengering (${bestDry.toFixed(1)}kg), sisanya jual segar.`;
-            else if (bestDry > 0) strategyEl.innerHTML = `Fokus Kering: Jual kering semua karena margin tinggi menutupi biaya listrik.`;
-            else strategyEl.innerHTML = `Fokus Segar: Jual segar semua lebih untung (hemat biaya listrik).`;
-
-            updateChart(bestFresh * priceFresh, bestDry * priceDry, opsCost, electricityCost, maxProfit);
-        }
-
-        function calculateProfit(fresh, dry, pFresh, pDry, cOps, energy, cElec, ratio, bcr) {
-            return ((fresh * pFresh) + (dry * pDry)) - ((fresh + dry * ratio) / bcr * cOps) - (dry * energy * cElec);
-        }
-
-        function formatRupiah(num) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num); }
-
-        function updateChart(rFresh, rDry, cOps, cElec, net) {
-            const ctx = document.getElementById('profitChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Omzet Segar', 'Omzet Kering', 'Biaya Ops', 'Listrik', 'Profit'],
-                    datasets: [{ data: [rFresh, rDry, cOps, cElec, net], backgroundColor: ['#3b82f6', '#f97316', '#ef4444', '#fca5a5', '#22c55e'], borderWidth: 1 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 9 } } } } }
+        function switchTab(tab) {
+            ['model', 'theory', 'ref'].forEach(t => {
+                document.getElementById('section-'+t).classList.add('hidden');
+                document.getElementById('tab-'+t).className = "px-6 py-2.5 rounded-xl text-sm font-heading font-semibold transition-all duration-300 text-slate-500 hover:text-poster-dark hover:bg-poster-cream";
             });
+            document.getElementById('section-'+tab).classList.remove('hidden');
+            document.getElementById('tab-'+tab).className = "px-6 py-2.5 rounded-xl text-sm font-heading font-semibold transition-all duration-300 bg-poster-dark text-white shadow-md";
+        }
+        function setMode(mode) {
+            const advArea = document.getElementById('advanced-area');
+            const btnSimple = document.getElementById('btn-simple');
+            const btnAdv = document.getElementById('btn-advanced');
+            if (mode === 'simple') {
+                advArea.classList.add('hidden');
+                btnSimple.className = "w-1/2 py-2 rounded-lg text-xs font-bold font-heading transition-all bg-poster-leaf text-white shadow-sm";
+                btnAdv.className = "w-1/2 py-2 rounded-lg text-xs font-bold font-heading transition-all text-slate-500 hover:text-poster-dark";
+                resetDefaults(); solve();
+            } else {
+                advArea.classList.remove('hidden');
+                btnAdv.className = "w-1/2 py-2 rounded-lg text-xs font-bold font-heading transition-all bg-poster-leaf text-white shadow-sm";
+                btnSimple.className = "w-1/2 py-2 rounded-lg text-xs font-bold font-heading transition-all text-slate-500 hover:text-poster-dark";
+            }
+        }
+        function resetDefaults() {
+            document.getElementById('w_b').value = 3; document.getElementById('w_k').value = 5;
+            document.getElementById('c_b').value = 2000; document.getElementById('c_k').value = 5000;
+            document.getElementById('s_b').value = 0.1; document.getElementById('s_k').value = 0.2;
+            document.getElementById('l_b').value = 0.05; document.getElementById('l_k').value = 0.1;
+            saveInputs();
+        }
+        function saveInputs() {
+            const inputs = document.querySelectorAll('input'); const data = {};
+            inputs.forEach(input => data[input.id] = input.value); localStorage.setItem('bsf_final_data', JSON.stringify(data));
+        }
+        function loadInputs() {
+            const data = JSON.parse(localStorage.getItem('bsf_final_data'));
+            if (data) { for (const key in data) { if (document.getElementById(key)) document.getElementById(key).value = data[key]; } }
+        }
+        function copyResult() {
+            const z = document.getElementById('res-z').innerText; const xb = document.getElementById('res-xb').innerText; const xk = document.getElementById('res-xk').innerText;
+            const text = `Hasil Optimasi:\nPendapatan: Rp ${z}\nProduksi Basah: ${xb} kg\nProduksi Kering: ${xk} kg`;
+            navigator.clipboard.writeText(text).then(() => { const btn = document.querySelector('button[onclick="copyResult()"]'); const orig = btn.innerHTML; btn.innerHTML = '<i class="fas fa-check"></i> Tersalin'; setTimeout(() => btn.innerHTML = orig, 2000); });
+        }
+        function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+        function formatRupiah(num) { return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(num); }
+        function animateValue(id, start, end, duration, isRupiah) {
+            if (start === end) return; const range = end - start; let current = start;
+            const obj = document.getElementById(id); const timer = setInterval(function() {
+                current += range / 20; 
+                if ((range > 0 && current >= end) || (range < 0 && current <= end)) { current = end; clearInterval(timer); }
+                obj.innerText = isRupiah ? formatRupiah(current) : current.toFixed(1);
+            }, 20);
+        }
+        function solve() {
+            const p_b = getVal('p_b'), p_k = getVal('p_k');
+            const W = getVal('W'), C = getVal('C'), S = getVal('S'), L = getVal('L');
+            const w_b = getVal('w_b'), w_k = getVal('w_k');
+            const c_b = getVal('c_b'), c_k = getVal('c_k');
+            const s_b = getVal('s_b'), s_k = getVal('s_k');
+            const l_b = getVal('l_b'), l_k = getVal('l_k');
+            let points = [{x: 0, y: 0}];
+            const constraints = [
+                { a: w_b, b: w_k, k: W, name: 'Sampah' }, { a: c_b, b: c_k, k: C, name: 'Anggaran' },
+                { a: s_b, b: s_k, k: S, name: 'Ruang' }, { a: l_b, b: l_k, k: L, name: 'Tenaga' }
+            ];
+            constraints.forEach(con => { if(con.a > 0) points.push({ x: con.k / con.a, y: 0 }); if(con.b > 0) points.push({ x: 0, y: con.k / con.b }); });
+            for (let i = 0; i < constraints.length; i++) {
+                for (let j = i + 1; j < constraints.length; j++) {
+                    const C1 = constraints[i], C2 = constraints[j]; const det = C1.a * C2.b - C2.a * C1.b;
+                    if (Math.abs(det) > 1e-6) { const x = (C2.b * C1.k - C1.b * C2.k) / det; const y = (C1.a * C2.k - C2.a * C1.k) / det; points.push({ x: x, y: y }); }
+                }
+            }
+            let feasiblePoints = points.filter(p => {
+                if (p.x < -1e-6 || p.y < -1e-6) return false;
+                for (let con of constraints) { if ((con.a * p.x + con.b * p.y) > con.k + 1e-6) return false; }
+                return true;
+            });
+            let maxZ = -1, bestPoint = { x: 0, y: 0 };
+            feasiblePoints.forEach(p => { const z = p.x * p_b + p.y * p_k; if (z > maxZ) { maxZ = z; bestPoint = p; } });
+            animateValue("res-z", parseInt(document.getElementById('res-z').innerText.replace(/\./g, '')) || 0, maxZ, 500, true);
+            document.getElementById('res-xb').innerText = bestPoint.x.toFixed(1); document.getElementById('res-xk').innerText = bestPoint.y.toFixed(1);
+            const usedW = w_b * bestPoint.x + w_k * bestPoint.y; const usedC = c_b * bestPoint.x + c_k * bestPoint.y;
+            const usedS = s_b * bestPoint.x + s_k * bestPoint.y; const usedL = l_b * bestPoint.x + l_k * bestPoint.y;
+            updateChart(usedW/W, usedC/C, usedS/S, usedL/L); analyzeLimits(usedW, W, usedC, C, usedS, S, usedL, L); saveInputs();
+        }
+        function updateChart(pW, pC, pS, pL) {
+            const ctx = document.getElementById('constraintChart').getContext('2d'); if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sampah', 'Anggaran', 'Ruang', 'Tenaga'],
+                    datasets: [{ label: '% Terpakai', data: [pW*100, pC*100, pS*100, pL*100], backgroundColor: ['#ea8e11', '#427f12', '#9333ea', '#ef4444'], borderRadius: 6, barThickness: 20 }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { max: 100, grid: { display: false } }, y: { grid: { display: false }, ticks: { font: { family: 'Poppins' } } } }, plugins: { legend: { display: false } } }
+            });
+        }
+        function analyzeLimits(uW, mW, uC, mC, uS, mS, uL, mL) {
+            const list = document.getElementById('limiting-factors'); list.innerHTML = ""; let limits = [];
+            const items = [
+                {u: uW, m: mW, n: "Sampah", i: "fa-trash-alt", c: "text-poster-orange", bg:"bg-orange-50"},
+                {u: uC, m: mC, n: "Anggaran", i: "fa-wallet", c: "text-poster-leaf", bg:"bg-green-50"},
+                {u: uS, m: mS, n: "Ruang", i: "fa-warehouse", c: "text-purple-500", bg:"bg-purple-50"},
+                {u: uL, m: mL, n: "Tenaga", i: "fa-users", c: "text-red-500", bg:"bg-red-50"}
+            ];
+            items.forEach(item => {
+                const pct = (item.u / item.m) * 100;
+                let html = `<li class="flex justify-between items-center p-2 rounded-lg ${item.bg} border border-transparent hover:border-slate-200 transition"><div class="flex items-center gap-3"><i class="fas ${item.i} ${item.c}"></i><span class="text-xs font-bold text-slate-600">${item.n}</span></div>`;
+                if (pct >= 99) { html += `<span class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">MAX</span>`; limits.push(item.n); } 
+                else { html += `<span class="text-xs font-mono font-bold text-slate-400">${Math.round(pct)}%</span>`; }
+                list.innerHTML += html + "</li>";
+            });
+            const rec = document.getElementById('recommendation');
+            if(limits.length > 0) rec.innerHTML = `<strong>⚠️ Perhatian:</strong> Tingkatkan kapasitas <b>${limits.join(" & ")}</b> untuk profit lebih.`;
+            else rec.innerHTML = `<strong>✅ Status Optimal:</strong> Sumber daya aman.`;
         }
     </script>
 </body>
